@@ -1,0 +1,5 @@
+<button (click)="toggleInventory()" class="inventory__open__button">
+  Нажми чтобы {{ !isInventoryOpened ? "открыть" : "закрыть" }} инвентарь
+</button>
+
+<app-inventory *ngIf="isInventoryOpened"></app-inventory>

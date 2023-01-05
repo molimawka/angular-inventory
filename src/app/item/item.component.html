@@ -1,0 +1,23 @@
+<div *ngIf="itemId !== -1" class="item__content">
+  <div
+    class="item__image"
+    [ngStyle]="{
+      'background-image': 'url(' + image + ')'
+    }"
+  ></div>
+  <span class="item__name">{{ name }}</span>
+  <span class="item__amount">{{ amount }}</span>
+  <div *ngIf="!disableTooltip" class="tooltip">
+    <span class="tooltip__text">
+      {{ name }}
+      <br />
+      {{ description }}
+      <ng-container *ngIf="additionalValue">
+        <br />
+        <span [style.color]="'#03ffe1'">
+          +{{ amount * additionalValue }} к карме
+        </span>
+      </ng-container>
+    </span>
+  </div>
+</div>

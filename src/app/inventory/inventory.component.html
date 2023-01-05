@@ -1,0 +1,71 @@
+<!-- <div class="container">
+  <mat-grid-list cdkDropListGroup [cols]="gridCols" gutterSize="5px">
+    <mat-grid-tile
+      cdkDropList
+      *ngFor="let item of items; index as i"
+      cdkDropListSortingDisabled="true"
+      [cdkDropListData]="item"
+    >
+      <app-item
+        [id]="item.itemId"
+        [name]="item.name"
+        [description]="item.description"
+        [amount]="item.amount"
+        [image]="item.image"
+        [additionalValue]="item.additionalValue"
+        cdkDrag
+        (cdkDragDropped)="onDrop($event)"
+        [cdkDragDisabled]="item.itemId === -1"
+        [cdkContextMenuTriggerFor]="item_menu"
+        [cdkContextMenuDisabled]="item.itemId === -1"
+        (cdkContextMenuOpened)="onContextMenuOpened(item)"
+      ></app-item>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div> -->
+
+<div class="container">
+  <div class="inventory-container" cdkDropListGroup>
+    <div
+      class="inventory-item"
+      cdkDropList
+      *ngFor="let item of items; index as i"
+      [cdkDropListData]="item"
+    >
+      <app-item
+        [id]="item.itemId"
+        [name]="item.name"
+        [description]="item.description"
+        [amount]="item.amount"
+        [image]="item.image"
+        [additionalValue]="item.additionalValue"
+        [disableTooltip]="isDragging"
+        cdkDrag
+        (cdkDragDropped)="onDragDropped($event)"
+        (cdkDragStarted)="onDragStarted()"
+        (cdkDragEnded)="onDragEnded()"
+        [cdkDragDisabled]="item.itemId === -1"
+        (contextmenu)="onContextMenu($event, item)"
+      ></app-item>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="contextmenu.opened"
+  class="item-menu"
+  [style.left]="contextmenu.x"
+  [style.top]="contextmenu.y"
+  [style.position]="'fixed'"
+>
+  <button
+    class="item-menu__button"
+    *ngIf="contextMenuSelectedItem && contextMenuSelectedItem.amount > 1"
+    (click)="unstackSelectedItem()"
+  >
+    Разделить
+  </button>
+  <button class="item-menu__button warn" (click)="destroySelectedItem()">
+    Удалить
+  </button>
+</div>
