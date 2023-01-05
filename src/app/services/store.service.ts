@@ -95,7 +95,7 @@ export class StoreService {
       itemId: 5,
       name: 'Фейерверк',
       description: 'Запускай и лети на луну',
-      amount: 31,
+      amount: 63,
       image: '/assets/firework.png',
       additionalValue: 0,
     },

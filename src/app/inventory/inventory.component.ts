@@ -12,6 +12,9 @@ export class InventoryComponent implements OnInit, OnDestroy {
   // Максимальное кол-во слотов инвентаря. Лучше конечно это кол-во получать с сервера.
   maxSlotsInInventory = 32;
 
+  // Максимальное кол-во айтема в одном слоте
+  maxItemInStack = 64;
+
   // Массив с айтемами
   items: INVENTORY_ITEM[] = [];
 
@@ -77,7 +80,8 @@ export class InventoryComponent implements OnInit, OnDestroy {
     // Если айтемы одинаковые и их опциональное значение одинаковое то стакаем их
     if (
       prevItem.itemId === currentItem.itemId &&
-      prevItem?.additionalValue === currentItem?.additionalValue
+      prevItem?.additionalValue === currentItem?.additionalValue &&
+      prevItem.amount + currentItem.amount <= this.maxItemInStack
     ) {
       currentItem.amount += prevItem.amount;
       this.items[prevItem.slotId] = {
