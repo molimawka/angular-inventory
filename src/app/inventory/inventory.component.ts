@@ -19,7 +19,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   items: INVENTORY_ITEM[] = [];
 
   // Айтем на котором было клацнуто пкмом)
-  contextMenuSelectedItem: INVENTORY_ITEM | undefined;
+  contextMenuSelectedSlotId: number | undefined;
 
   emptyItem = {
     itemId: -1,
@@ -92,14 +92,21 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
 
     // В другом же случаи просто меняем айтемы местами
-    const copyPrevItem = { ...prevItem, slotId: currentItem.slotId };
-    this.items[prevItem.slotId] = { ...currentItem, slotId: prevItem.slotId };
-    this.items[currentItem.slotId] = copyPrevItem;
+
+    const copyPrevItemSlotId = prevItem.slotId;
+    prevItem.slotId = currentItem.slotId;
+    currentItem.slotId = copyPrevItemSlotId;
+
+    this.items[currentItem.slotId] = currentItem;
+    this.items[prevItem.slotId] = prevItem;
   }
 
   // Для отключения тултипа
   onDragStarted() {
     this.isDragging = true;
+    if (this.contextmenu.opened) {
+      this.contextmenu.opened = false;
+    }
   }
 
   // Для включения тултипа
@@ -108,10 +115,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
   }
 
   // Хендлер открытия контекстного меню
-  onContextMenu(event: MouseEvent, item: INVENTORY_ITEM) {
+  onContextMenu(event: MouseEvent, slotId: number) {
     event.preventDefault();
 
-    this.contextMenuSelectedItem = item;
+    this.contextMenuSelectedSlotId = slotId;
     this.contextmenu.x = event.clientX + 'px';
     this.contextmenu.y = event.clientY + 'px';
     this.contextmenu.opened = true;
@@ -127,11 +134,10 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   // Разделка предметов
   unstackSelectedItem() {
-    if (!this.contextMenuSelectedItem) return;
-    if (this.contextMenuSelectedItem.itemId === -1) return;
+    if (!this.contextMenuSelectedSlotId) return;
 
-    const item = this.contextMenuSelectedItem;
-    if (item.amount <= 1) return;
+    const item = this.items[this.contextMenuSelectedSlotId];
+    if (item.itemId === -1 || item.amount <= 1) return;
 
     const unstackAmount = Math.floor(item.amount / 2);
     if (unstackAmount < 1 || item.amount - unstackAmount < 1) return;
@@ -146,20 +152,21 @@ export class InventoryComponent implements OnInit, OnDestroy {
       amount: unstackAmount,
     };
 
-    this.contextMenuSelectedItem = undefined;
+    this.contextMenuSelectedSlotId = undefined;
   }
 
   // Удаление айтема
   destroySelectedItem() {
-    if (!this.contextMenuSelectedItem) return;
-    if (this.contextMenuSelectedItem.itemId === -1) return;
+    if (!this.contextMenuSelectedSlotId) return;
 
-    const item = this.contextMenuSelectedItem;
+    const item = this.items[this.contextMenuSelectedSlotId];
+    if (item.itemId === -1) return;
+
     this.items[item.slotId] = {
       slotId: item.slotId,
       ...this.emptyItem,
     };
 
-    this.contextMenuSelectedItem = undefined;
+    this.contextMenuSelectedSlotId = undefined;
   }
 }

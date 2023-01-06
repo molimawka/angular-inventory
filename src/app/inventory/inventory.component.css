@@ -7,6 +7,7 @@
 .item-menu {
   display: flex;
   flex-direction: column;
+  position: fixed;
   background-color: white;
   z-index: 2;
 }

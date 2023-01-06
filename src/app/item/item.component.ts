@@ -13,4 +13,5 @@ export class ItemComponent {
   @Input('image') image!: string;
   @Input('additionalValue') additionalValue: number | undefined;
   @Input('disableTooltip') disableTooltip: boolean = false;
+  @Input('enchanted') enchanted: boolean = false;
 }

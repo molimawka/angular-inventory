@@ -37,6 +37,6 @@ body {
   word-wrap: break-word;
 }
 
-.tooltip:hover .tooltip__text {
+.tooltip:not(.tooltip__disabled):hover .tooltip__text {
   visibility: visible;
 }

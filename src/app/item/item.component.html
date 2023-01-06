@@ -1,4 +1,8 @@
-<div *ngIf="itemId !== -1" class="item__content">
+<div
+  *ngIf="itemId !== -1"
+  class="item__content"
+  [ngClass]="{ enchanted: enchanted }"
+>
   <div
     class="item__image"
     [ngStyle]="{
@@ -7,7 +11,7 @@
   ></div>
   <span class="item__name">{{ name }}</span>
   <span class="item__amount">{{ amount }}</span>
-  <div *ngIf="!disableTooltip" class="tooltip">
+  <div class="tooltip" [ngClass]="{ tooltip__disabled: disableTooltip }">
     <span class="tooltip__text">
       {{ name }}
       <br />

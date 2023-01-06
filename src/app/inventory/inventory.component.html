@@ -40,12 +40,13 @@
         [image]="item.image"
         [additionalValue]="item.additionalValue"
         [disableTooltip]="isDragging"
+        [enchanted]="!!item.additionalValue"
         cdkDrag
         (cdkDragDropped)="onDragDropped($event)"
         (cdkDragStarted)="onDragStarted()"
         (cdkDragEnded)="onDragEnded()"
         [cdkDragDisabled]="item.itemId === -1"
-        (contextmenu)="onContextMenu($event, item)"
+        (contextmenu)="onContextMenu($event, item.slotId)"
       ></app-item>
     </div>
   </div>
@@ -56,11 +57,14 @@
   class="item-menu"
   [style.left]="contextmenu.x"
   [style.top]="contextmenu.y"
-  [style.position]="'fixed'"
 >
   <button
     class="item-menu__button"
-    *ngIf="contextMenuSelectedItem && contextMenuSelectedItem.amount > 1"
+    *ngIf="
+      contextMenuSelectedSlotId &&
+      items[contextMenuSelectedSlotId] &&
+      items[contextMenuSelectedSlotId].amount > 1
+    "
     (click)="unstackSelectedItem()"
   >
     Разделить
