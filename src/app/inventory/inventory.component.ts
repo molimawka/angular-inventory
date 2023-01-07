@@ -1,6 +1,10 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { INVENTORY_ITEM } from '../common/types';
+import {
+  INVENTORY_ITEM,
+  STORE_INVENTORY,
+  STORE_INVENTORY_ITEM,
+} from '../common/types';
 import { StoreService } from '../services/store.service';
 
 @Component({
@@ -9,9 +13,6 @@ import { StoreService } from '../services/store.service';
   styleUrls: ['./inventory.component.css'],
 })
 export class InventoryComponent implements OnInit, OnDestroy {
-  // Максимальное кол-во слотов инвентаря. Лучше конечно это кол-во получать с сервера.
-  maxSlotsInInventory = 32;
-
   // Максимальное кол-во айтема в одном слоте
   maxItemInStack = 64;
 
@@ -43,7 +44,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // При создании компонента "загружаем" массив "пустыми" айтемами
-    for (let i = 0; i < this.maxSlotsInInventory; i++) {
+    for (let i = 0; i < this.storeService.maxSlots; i++) {
       this.items[i] = {
         slotId: i,
         ...this.emptyItem,
@@ -51,16 +52,37 @@ export class InventoryComponent implements OnInit, OnDestroy {
     }
 
     // Получаем информацию про инвентарь с сервера
-    this.storeService.getInventoryItems().subscribe((items) => {
-      for (const item of items) {
-        this.items[item.slotId] = { ...item };
+    this.storeService.getInventoryItems().subscribe((store) => {
+      for (const item of store) {
+        this.items[item.slotId] = { ...item.item, slotId: item.slotId };
       }
     });
   }
 
   ngOnDestroy() {
     // При дестрое компонента сохраняем инвентарь и "шлем" инфу на сервер
-    this.storeService.saveInventoryItems(this.items);
+    const inventoryDataForStore: STORE_INVENTORY = [];
+    this.items.forEach((item) => {
+      if (item.itemId !== -1) {
+        const itemInStoreFormat: STORE_INVENTORY_ITEM = {
+          itemId: item.itemId,
+          name: item.name,
+          description: item.description,
+          image: item.image,
+          amount: item.amount,
+        };
+
+        if (typeof item.additionalValue === 'number') {
+          itemInStoreFormat.additionalValue = item.additionalValue;
+        }
+        inventoryDataForStore.push({
+          slotId: item.slotId,
+          item: itemInStoreFormat,
+        });
+      }
+    });
+
+    this.storeService.saveInventoryItems(inventoryDataForStore);
 
     // И на всякий чистим массив с айтемами
     this.items = [];
