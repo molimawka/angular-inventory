@@ -102,14 +102,28 @@ export class InventoryComponent implements OnInit, OnDestroy {
     // Если айтемы одинаковые и их опциональное значение одинаковое то стакаем их
     if (
       prevItem.itemId === currentItem.itemId &&
-      prevItem?.additionalValue === currentItem?.additionalValue &&
-      prevItem.amount + currentItem.amount <= this.maxItemInStack
+      prevItem?.additionalValue === currentItem?.additionalValue
     ) {
-      currentItem.amount += prevItem.amount;
-      this.items[prevItem.slotId] = {
-        slotId: prevItem.slotId,
-        ...this.emptyItem,
-      };
+      // Вычисляем насколько переполненится стак
+      const stackOverflow =
+        currentItem.amount + prevItem.amount - this.maxItemInStack;
+
+      /**
+       * Если переполение больше 0 то в одну ячейку записываем максимальное кол-во в стаке
+       * В другую ячейку Записываем переполение
+       *
+       * Иначе складываем два предмета в один
+       */
+      if (stackOverflow > 0) {
+        currentItem.amount = this.maxItemInStack;
+        prevItem.amount = stackOverflow;
+      } else {
+        currentItem.amount += prevItem.amount;
+        this.items[prevItem.slotId] = {
+          slotId: prevItem.slotId,
+          ...this.emptyItem,
+        };
+      }
       return;
     }
 
