@@ -35,7 +35,7 @@
   <button
     class="item-menu__button"
     *ngIf="
-      contextMenuSelectedSlotId &&
+      contextMenuSelectedSlotId !== undefined &&
       items[contextMenuSelectedSlotId] &&
       items[contextMenuSelectedSlotId].amount > 1
     "

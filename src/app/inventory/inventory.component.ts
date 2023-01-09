@@ -170,7 +170,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   // Разделка предметов
   unstackSelectedItem() {
-    if (!this.contextMenuSelectedSlotId) return;
+    if (this.contextMenuSelectedSlotId === undefined) return;
 
     const item = this.items[this.contextMenuSelectedSlotId];
     if (item.itemId === -1 || item.amount <= 1) return;
@@ -193,7 +193,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   // Удаление айтема
   destroySelectedItem() {
-    if (!this.contextMenuSelectedSlotId) return;
+    if (this.contextMenuSelectedSlotId === undefined) return;
 
     const item = this.items[this.contextMenuSelectedSlotId];
     if (item.itemId === -1) return;
